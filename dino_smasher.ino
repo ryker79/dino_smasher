@@ -15,49 +15,89 @@ Arduboy2 arduboy;
 #define GAME_PLAY 1
 #define GAME_OVER 2
 #define GAME_HIGH 3
+#define WORLD_HEIGHT 4
+#define WORLD_WIDTH 20
+
 int game_state = GAME_TITLE;
+int world[WORLD_HEIGHT][WORLD_WIDTH] = 
+{
+	{ 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 },
+	{ 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0 },
+	{ 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 }
+};
 
 // Define Functions below here or use other .ino or cpp files
 //
-void title_screen()
+void drawWorld()
+{
+	for (int y = 0; y < 4; ++y)
+	{
+		for (int x = 0; x < 20; ++x)
+		{
+			arduboy.print(world[y][x]);
+		}
+		arduboy.print("\n");
+	}
+}
+
+void titleScreen()
 {
 	arduboy.setCursor(0, 0);
 	arduboy.print("Dino Smasher \n");
+	
+	if (arduboy.justPressed(A_BUTTON))
+	{
+		++game_state;
+	}
 }
 
-void game_play_screen()
+void gamePlayScreen()
 {
 	arduboy.setCursor(0, 0);
 	arduboy.print("Gameplay \n");
+	drawWorld();
+	if (arduboy.justPressed(A_BUTTON))
+	{
+		++game_state;
+	}
 }
 
-void game_over_screen()
+void gameOverScreen()
 {
 	arduboy.setCursor(0, 0);
 	arduboy.print("Game Over \n");
+	if (arduboy.justPressed(A_BUTTON))
+	{
+		++game_state;
+	}
 }
 
-void high_score_screen()
+void highScoreScreen()
 {
 	arduboy.setCursor(0, 0);
 	arduboy.print("High Score: \n");
+	if (arduboy.justPressed(A_BUTTON))
+	{
+		game_state = GAME_TITLE;
+	}
 }
 
-void game_loop()
+void gameLoop()
 {
 	switch(game_state)
 	{
 	case GAME_TITLE:
-		title_screen();
+		titleScreen();
 		break;
 	case GAME_PLAY:
-		game_play_screen();
+		gamePlayScreen();
 		break;
 	case GAME_OVER:
-		game_over_screen();
+		gameOverScreen();
 		break;
 	case GAME_HIGH:
-		high_score_screen();
+		highScoreScreen();
 		break;
 	}
 }
@@ -86,7 +126,7 @@ void loop()
 
 	arduboy.clear();
 	
-	game_loop();
+	gameLoop();
 
 	arduboy.display();
 }
